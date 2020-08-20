@@ -1,0 +1,38 @@
+# for more info visit https://cto.ai/docs/developing-ops/configuring-ops
+version: "1"
+pipelines:
+  - name: cicd-demo-pl:0.1.0
+    jobs:
+      - name: cicd-demo-j-1
+        packages: ["git"]
+        sdk: "2"
+        description: "step one"
+        steps:
+          - echo "STEP 1) Run Tests"
+          - git clone https://github.com/cto-ai/ctoai-cicd-demo.git
+          - go test ctoai-cicd-demo
+          - echo SUCCESS
+      - name: cicd-demo-j-2
+        packages: ["git","golang", "python3-pip"]
+        sdk: "2"
+        description: "step two"
+        steps:
+          - echo "STEP 2) Deploy Code"
+          - pip3 install awsebcli --upgrade --user
+          - export AWS_ACCESS_KEY_ID="$(sdk secret get AWS_ACCESS_KEY_ID)"
+          - export AWS_SECRET_ACCESS_KEY="$(sdk secret get AWS_SECRET_ACCESS_KEY)"
+          - git clone https://github.com/cto-ai/ctoai-cicd-demo.git
+          - cd ./ctoai-cicd-demo
+          - $HOME/.local/bin/eb deploy
+      - name: cicd-demo-j-3
+        sdk: "2"
+        description: "step three"
+        steps:
+          - echo "STEP 3) confirm deploy"
+          - status_code="$(curl --write-out %{http_code} --silent --output /dev/null 'http://ctoai-cicd-demo.us-east-2.elasticbeanstalk.com')"
+          - if [[ "$status_code" != "200" ]] ; then
+          - echo "STATUS CODE IS ${status_code}!"
+          - exit 1
+          - else
+          - exit 0
+          - fi
