@@ -1,0 +1,21 @@
+branch-defaults:
+  default:
+    environment: CtoaiCICDDemo-env
+  master:
+    environment: CtoaiCICDDemo-env
+environment-defaults:
+  CtoaiCICDDemo-env:
+    branch: null
+    repository: null
+global:
+  application_name: ctoai-cicd-demo
+  default_ec2_keyname: null
+  default_platform: Go 1 running on 64bit Amazon Linux 2
+  default_region: us-east-2
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: null
+  sc: git
+  workspace_type: Application
